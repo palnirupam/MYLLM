@@ -1,0 +1,124 @@
+{
+  "model_training": {
+    "model_parameters": 100092672,
+    "training_dataset": "wikitext-2-raw-v1 (train)",
+    "dataset_token_count": 2253468,
+    "training_steps": 500,
+    "initial_loss_theoretical": 10.3735,
+    "initial_loss_measured": 690.7142,
+    "final_train_loss_reported": 16.52,
+    "learning_rate": 0.0003,
+    "effective_batch_size": 32,
+    "sequence_length": 512,
+    "tokens_per_second": 6808,
+    "gpu_device": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_usage_gb": 0.77
+  },
+  "causal_lm_objective": {
+    "shift_correct": true,
+    "strictly_causal": true,
+    "diff_pos_0": 0.0,
+    "diff_pos_3": 59.35102844238281
+  },
+  "tokenizer": {
+    "vocab_size": 32000,
+    "bos_token_id": 2,
+    "eos_token_id": 3,
+    "pad_token_id": 0,
+    "unk_token_id": 1,
+    "roundtrip_all_passed": true
+  },
+  "checkpoint_loading": {
+    "missing_keys": [
+      "token_embedding.weight"
+    ],
+    "unexpected_keys": [],
+    "has_nans": false,
+    "checkpoint_healthy": false
+  },
+  "kv_cache": {
+    "kv_cache_match": true,
+    "tokens_no_cache": [
+      212,
+      255,
+      3,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241
+    ],
+    "tokens_with_cache": [
+      212,
+      255,
+      3,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241,
+      241
+    ],
+    "text_no_cache": " . \n = = = = = = = = = = = =",
+    "text_with_cache": " . \n = = = = = = = = = = = ="
+  },
+  "eos_behavior": {
+    "eos_token_id": 3,
+    "pad_token_id": 0,
+    "tokens_valid_range": true
+  },
+  "dataset_quality": {
+    "total_rows": 36718,
+    "empty_rows": 12951,
+    "non_empty_rows": 23767,
+    "wiki_header_lines": 6211,
+    "average_word_length": 86.33
+  },
+  "overfit_test": {
+    "initial_loss": 120.7565,
+    "final_overfit_loss": 0.1982,
+    "all_reproduced": true,
+    "samples": [
+      {
+        "target": "The sky is blue.",
+        "generated": "The sky is blue.",
+        "matched": true
+      },
+      {
+        "target": "Cats have four legs.",
+        "generated": "Cats have four legs.",
+        "matched": true
+      },
+      {
+        "target": "2 + 2 equals 4.",
+        "generated": "2 + 2 equals 4.",
+        "matched": true
+      },
+      {
+        "target": "Paris is the capital of France.",
+        "generated": "Paris is the capital of France.",
+        "matched": true
+      }
+    ]
+  },
+  "gradient_verification": {
+    "loss_requires_grad": true,
+    "total_grad_norm": 376.687508,
+    "has_nans": false,
+    "has_zeros": false,
+    "weight_update_norm": 0.076799
+  }
+}

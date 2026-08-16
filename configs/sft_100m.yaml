@@ -1,0 +1,24 @@
+model:
+  vocab_size: 32000
+  d_model: 768
+  n_layers: 12
+  n_heads: 12
+  n_kv_heads: 4
+  max_seq_len: 512
+  hidden_dim: 2048
+  rms_norm_eps: 1.0e-5
+
+training:
+  base_model_path: output/v0_100m/final_model
+  output_dir: output/v0_100m_sft
+  batch_size: 2
+  gradient_accumulation_steps: 16
+  max_steps: 1000
+  eval_steps: 100
+  save_steps: 100
+  learning_rate: 2.0e-5
+  warmup_steps: 50
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  mixed_precision: bf16 # or fp16/fp32 depending on GPU
+  seed: 42

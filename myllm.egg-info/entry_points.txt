@@ -1,0 +1,2 @@
+[console_scripts]
+myllm = myllm.cli.main:main
