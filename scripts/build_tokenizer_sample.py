@@ -71,23 +71,58 @@ def main():
             print(f"{s['lang']} already fetched.")
             
     code_file = out_dir / "code_sample.txt"
+    manifest_file = out_dir / "code_sample_manifest.json"
     if not code_file.exists():
-        import sys, glob
-        lib_dir = Path(sys.exec_prefix) / "Lib"
-        collected_chars = 0
-        with open(code_file, "w", encoding="utf-8") as f:
-            for py_file in lib_dir.rglob("*.py"):
-                try:
-                    with open(py_file, "r", encoding="utf-8") as pf:
-                        content = pf.read()
-                        f.write(content + "\n")
+        import hashlib
+        print("Fetching Python Code sample...")
+        try:
+            ds_code = load_dataset(
+                "iamtarun/python_code_instructions_18k_alpaca", 
+                split="train", 
+                streaming=True,
+                revision="main"
+            )
+            collected_chars = 0
+            examples = 0
+            hasher = hashlib.sha256()
+            
+            with open(code_file, "w", encoding="utf-8") as f:
+                for row in ds_code:
+                    code_text = row.get("output", "")
+                    if len(code_text.strip()) > 50:
+                        content = code_text.strip() + "\n\n"
+                        f.write(content)
                         collected_chars += len(content)
+                        examples += 1
+                        hasher.update(content.encode('utf-8'))
                         if collected_chars >= target_chars:
                             break
-                except UnicodeDecodeError:
-                    # Skip non-UTF-8 files (binary or non-text Python files)
-                    pass
-        print(f"  -> Saved {collected_chars} characters for Code.")
+            
+            if collected_chars == 0:
+                raise ValueError("Zero code examples collected. Validation failed.")
+                
+            manifest = {
+                "language": "Python",
+                "source": "iamtarun/python_code_instructions_18k_alpaca",
+                "revision": "main",
+                "characters": collected_chars,
+                "files_or_examples": examples,
+                "sha256": hasher.hexdigest()
+            }
+            
+            import json
+            with open(manifest_file, "w", encoding="utf-8") as mf:
+                json.dump(manifest, mf, indent=2)
+                
+            print(f"Code source: {manifest['source']}")
+            print(f"Code revision: {manifest['revision']}")
+            print(f"Code files/examples: {manifest['files_or_examples']}")
+            print(f"Code characters: {manifest['characters']}")
+            print(f"SHA-256: {manifest['sha256']}")
+            
+        except Exception as e:
+            print(f"  -> Error fetching code sample: {e}")
+            raise
     else:
         print("Code already fetched.")
 
