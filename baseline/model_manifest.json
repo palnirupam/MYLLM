@@ -1,0 +1,20 @@
+{
+  "model_name": "Dhruva-100M-Base",
+  "model_path": "output/v0_100m/final_model",
+  "parameters": 100092672,
+  "training_metrics": {
+    "model_parameters": 100092672,
+    "training_dataset": "wikitext-2-raw-v1 (train)",
+    "dataset_token_count": 2253468,
+    "training_steps": 500,
+    "initial_loss_theoretical": 10.3735,
+    "initial_loss_measured": 690.7142,
+    "final_train_loss_reported": 16.52,
+    "learning_rate": 0.0003,
+    "effective_batch_size": 32,
+    "sequence_length": 512,
+    "tokens_per_second": 6808,
+    "gpu_device": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_usage_gb": 0.77
+  }
+}

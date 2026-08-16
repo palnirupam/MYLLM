@@ -1,0 +1,6 @@
+torch>=2.0
+safetensors>=0.4
+tokenizers>=0.19
+datasets>=2.0
+pyyaml>=6.0
+numpy

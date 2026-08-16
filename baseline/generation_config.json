@@ -1,0 +1,14 @@
+{
+  "greedy": {
+    "do_sample": false,
+    "temperature": 1.0,
+    "top_k": 0,
+    "top_p": 1.0
+  },
+  "sampling_recommended": {
+    "do_sample": true,
+    "temperature": 0.7,
+    "top_k": 50,
+    "top_p": 0.9
+  }
+}

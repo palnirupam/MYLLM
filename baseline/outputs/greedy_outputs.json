@@ -1,0 +1,57 @@
+[
+  {
+    "prompt": "What is a computer?",
+    "generated_text": " . \n",
+    "metrics": {
+      "token_count": 2,
+      "unique_token_ratio": 1.0,
+      "rep_3gram": 0.0,
+      "rep_4gram": 0.0,
+      "longest_repeated_consecutive": 1
+    }
+  },
+  {
+    "prompt": "What is Python?",
+    "generated_text": " . \n",
+    "metrics": {
+      "token_count": 2,
+      "unique_token_ratio": 1.0,
+      "rep_3gram": 0.0,
+      "rep_4gram": 0.0,
+      "longest_repeated_consecutive": 1
+    }
+  },
+  {
+    "prompt": "The capital of France is",
+    "generated_text": " a \" . \n",
+    "metrics": {
+      "token_count": 4,
+      "unique_token_ratio": 1.0,
+      "rep_3gram": 0.0,
+      "rep_4gram": 0.0,
+      "longest_repeated_consecutive": 1
+    }
+  },
+  {
+    "prompt": "Albert Einstein was",
+    "generated_text": " . \n",
+    "metrics": {
+      "token_count": 2,
+      "unique_token_ratio": 1.0,
+      "rep_3gram": 0.0,
+      "rep_4gram": 0.0,
+      "longest_repeated_consecutive": 1
+    }
+  },
+  {
+    "prompt": "A computer is",
+    "generated_text": " a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a",
+    "metrics": {
+      "token_count": 50,
+      "unique_token_ratio": 0.02,
+      "rep_3gram": 0.9792,
+      "rep_4gram": 0.9787,
+      "longest_repeated_consecutive": 50
+    }
+  }
+]

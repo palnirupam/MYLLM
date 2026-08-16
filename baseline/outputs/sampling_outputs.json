@@ -1,0 +1,173 @@
+{
+  "sampling_temp_0.7": [
+    {
+      "prompt": "What is a computer?",
+      "generated_text": " of the drawn drawn drawn drawn derives derives derives derives derives derives derives derives derives derives derives in the the Demographics of the road road road road for the Holocaust , which was impact represent play play play play and 's has been seen seen with thec and",
+      "metrics": {
+        "token_count": 50,
+        "unique_token_ratio": 0.46,
+        "rep_3gram": 0.2292,
+        "rep_4gram": 0.1489,
+        "longest_repeated_consecutive": 11
+      }
+    },
+    {
+      "prompt": "What is Python?",
+      "generated_text": " , he novel novel ; in the \n",
+      "metrics": {
+        "token_count": 8,
+        "unique_token_ratio": 0.875,
+        "rep_3gram": 0.0,
+        "rep_4gram": 0.0,
+        "longest_repeated_consecutive": 2
+      }
+    },
+    {
+      "prompt": "The capital of France is",
+      "generated_text": " mythology , with the moved . He McDonough McDonough McDonough McDonough McDonough McDonough McDonough that itexpected and . \" . In athropthropthropthrop and the genetic of the ft , another another . \" , a \" , with the 's meet at the present",
+      "metrics": {
+        "token_count": 50,
+        "unique_token_ratio": 0.5,
+        "rep_3gram": 0.125,
+        "rep_4gram": 0.0638,
+        "longest_repeated_consecutive": 7
+      }
+    },
+    {
+      "prompt": "Albert Einstein was",
+      "generated_text": " and it – on the Grand , and the character in theaughter , have been a pattern , the Hent grab grab grab grab temperature temperature temperature temperature temperature temperature temperature , including including including Av , as he linked \" \n",
+      "metrics": {
+        "token_count": 43,
+        "unique_token_ratio": 0.5581,
+        "rep_3gram": 0.122,
+        "rep_4gram": 0.075,
+        "longest_repeated_consecutive": 7
+      }
+    },
+    {
+      "prompt": "A computer is",
+      "generated_text": " a their their problems problems = = = = = = \n",
+      "metrics": {
+        "token_count": 12,
+        "unique_token_ratio": 0.4167,
+        "rep_3gram": 0.3,
+        "rep_4gram": 0.2222,
+        "longest_repeated_consecutive": 6
+      }
+    }
+  ],
+  "sampling_top_k_50": [
+    {
+      "prompt": "What is a computer?",
+      "generated_text": " by the Damage Damage Damage . \n",
+      "metrics": {
+        "token_count": 7,
+        "unique_token_ratio": 0.7143,
+        "rep_3gram": 0.0,
+        "rep_4gram": 0.0,
+        "longest_repeated_consecutive": 3
+      }
+    },
+    {
+      "prompt": "What is Python?",
+      "generated_text": " in the a with the were the first . \n",
+      "metrics": {
+        "token_count": 10,
+        "unique_token_ratio": 0.8,
+        "rep_3gram": 0.0,
+        "rep_4gram": 0.0,
+        "longest_repeated_consecutive": 1
+      }
+    },
+    {
+      "prompt": "The capital of France is",
+      "generated_text": " a = = \n",
+      "metrics": {
+        "token_count": 4,
+        "unique_token_ratio": 0.75,
+        "rep_3gram": 0.0,
+        "rep_4gram": 0.0,
+        "longest_repeated_consecutive": 2
+      }
+    },
+    {
+      "prompt": "Albert Einstein was",
+      "generated_text": " the British British British , and its to the album of the time of the ( 1 @.@ 6 a North North North North on the club . \n",
+      "metrics": {
+        "token_count": 29,
+        "unique_token_ratio": 0.6552,
+        "rep_3gram": 0.037,
+        "rep_4gram": 0.0,
+        "longest_repeated_consecutive": 4
+      }
+    },
+    {
+      "prompt": "A computer is",
+      "generated_text": " is the in the first @-@ and the the United are – – – – 's modelled modelled modelled modelled modelled modelled modelled in the first that was for a Post – only ; the approached approached approached approached approached approached approached approached approached approached approached approached approached approached",
+      "metrics": {
+        "token_count": 50,
+        "unique_token_ratio": 0.4,
+        "rep_3gram": 0.3542,
+        "rep_4gram": 0.2766,
+        "longest_repeated_consecutive": 14
+      }
+    }
+  ],
+  "sampling_top_p_0.9": [
+    {
+      "prompt": "What is a computer?",
+      "generated_text": " . \n",
+      "metrics": {
+        "token_count": 2,
+        "unique_token_ratio": 1.0,
+        "rep_3gram": 0.0,
+        "rep_4gram": 0.0,
+        "longest_repeated_consecutive": 1
+      }
+    },
+    {
+      "prompt": "What is Python?",
+      "generated_text": " to be the Hot Hot Hot Hot and he was at thetonton of the beneficial the game , and dinner . In a mayor mayor mayor , which was the 's as a bed : the time , the integr integr integr integr . In the sacred",
+      "metrics": {
+        "token_count": 50,
+        "unique_token_ratio": 0.54,
+        "rep_3gram": 0.0417,
+        "rep_4gram": 0.0,
+        "longest_repeated_consecutive": 4
+      }
+    },
+    {
+      "prompt": "The capital of France is",
+      "generated_text": " a Southern Southern Southern Southern Southern of the Word Word Word Word Word Word ) , and what what what what what what what , the first named named . This ) , the up for the also theony at the other the Lost to the to the role",
+      "metrics": {
+        "token_count": 50,
+        "unique_token_ratio": 0.44,
+        "rep_3gram": 0.1875,
+        "rep_4gram": 0.1277,
+        "longest_repeated_consecutive": 7
+      }
+    },
+    {
+      "prompt": "Albert Einstein was",
+      "generated_text": " in the are are his ) . \n",
+      "metrics": {
+        "token_count": 8,
+        "unique_token_ratio": 0.875,
+        "rep_3gram": 0.0,
+        "rep_4gram": 0.0,
+        "longest_repeated_consecutive": 2
+      }
+    },
+    {
+      "prompt": "A computer is",
+      "generated_text": " is a a a a Team Team Team Team Team Team Team Team Team Team Team Team Team Team Team Team Team Team Team . The and 's was also Major Major Major Major Major Major Major Major Major Major Major Major Major Major Major Major Major Major Major",
+      "metrics": {
+        "token_count": 50,
+        "unique_token_ratio": 0.22,
+        "rep_3gram": 0.6875,
+        "rep_4gram": 0.6383,
+        "longest_repeated_consecutive": 19
+      }
+    }
+  ]
+}
