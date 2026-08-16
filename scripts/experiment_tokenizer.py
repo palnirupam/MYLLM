@@ -46,6 +46,18 @@ def load_corpora(directory: Path):
             text = f.read()
             corpora[lang] = text
             total_text += text + "\n"
+            
+    # Explicitly load code_sample.txt if it somehow wasn't picked up
+    code_file = directory / "code_sample.txt"
+    if code_file.exists() and "Code" not in corpora:
+        with open(code_file, 'r', encoding='utf-8') as f:
+            text = f.read()
+            corpora["Code"] = text
+            total_text += text + "\n"
+            
+    assert "Code" in corpora, "Code corpus not found in workspace"
+    assert len(corpora["Code"]) > 0, "Code corpus is empty"
+    
     return corpora, total_text
 
 def measure_speed(tokenizer, text, is_hf=False):
