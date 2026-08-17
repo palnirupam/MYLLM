@@ -19,7 +19,7 @@ training:
   warmup_steps: 100
   max_steps: 500
   max_grad_norm: 1.0
-  mixed_precision: bf16
+  mixed_precision: fp16
   log_interval: 10
   checkpoint_interval: 250
   seed: 42

@@ -80,7 +80,7 @@ def main():
                 "iamtarun/python_code_instructions_18k_alpaca", 
                 split="train", 
                 streaming=True,
-                revision="main"
+                revision="7cae181e29701a8663a07a3ea43c8e105b663ba1"
             )
             collected_chars = 0
             examples = 0
@@ -101,24 +101,26 @@ def main():
             if collected_chars == 0:
                 raise ValueError("Zero code examples collected. Validation failed.")
                 
+            file_hash = hasher.hexdigest()
             manifest = {
                 "language": "Python",
-                "source": "iamtarun/python_code_instructions_18k_alpaca",
-                "revision": "main",
-                "characters": collected_chars,
-                "files_or_examples": examples,
-                "sha256": hasher.hexdigest()
+                "repository": "iamtarun/python_code_instructions_18k_alpaca",
+                "commit_SHA": "7cae181e29701a8663a07a3ea43c8e105b663ba1",
+                "dataset_file_hash": file_hash,
+                "examples_count": examples,
+                "character_count": collected_chars,
+                "SHA-256": file_hash
             }
             
             import json
             with open(manifest_file, "w", encoding="utf-8") as mf:
                 json.dump(manifest, mf, indent=2)
                 
-            print(f"Code source: {manifest['source']}")
-            print(f"Code revision: {manifest['revision']}")
-            print(f"Code files/examples: {manifest['files_or_examples']}")
-            print(f"Code characters: {manifest['characters']}")
-            print(f"SHA-256: {manifest['sha256']}")
+            print(f"Code repository: {manifest['repository']}")
+            print(f"Code commit SHA: {manifest['commit_SHA']}")
+            print(f"Code examples: {manifest['examples_count']}")
+            print(f"Code characters: {manifest['character_count']}")
+            print(f"SHA-256: {manifest['SHA-256']}")
             
         except Exception as e:
             print(f"  -> Error fetching code sample: {e}")

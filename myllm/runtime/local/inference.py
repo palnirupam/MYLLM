@@ -24,8 +24,8 @@ class LocalInferenceRuntime(InferenceRuntime):
         weights_path = p / "model.safetensors"
         tokenizer_path = p / "tokenizer"
 
-        config = ModelConfig.load(str(config_path))
-        self.model = MyLLMModel(config)
+        self.config = ModelConfig.load(str(config_path))
+        self.model = MyLLMModel(self.config)
         
         load_model(self.model, str(weights_path))
         self.model.to(self.device)
@@ -59,12 +59,20 @@ class LocalInferenceRuntime(InferenceRuntime):
         input_ids = ([self.tokenizer.bos_token_id] if self.tokenizer.bos_token_id is not None else []) + raw_ids
         if not input_ids:
             input_ids = [self.tokenizer.bos_token_id or 0]
+
+        # Guard against prompt exceeding max_seq_len
+        if len(input_ids) >= self.config.max_seq_len:
+            input_ids = input_ids[-(self.config.max_seq_len - 1):]
+
+        max_generate = min(max_new_tokens, self.config.max_seq_len - len(input_ids))
+        if max_generate <= 0:
+            return prompt
+
         input_tensor = torch.tensor([input_ids], device=self.device)
-        
         kv_cache = None
         generated_ids = []
-        
-        for _ in range(max_new_tokens):
+
+        for _ in range(max_generate):
             logits, kv_cache = self.model(input_tensor, kv_cache=kv_cache, use_cache=True)
             next_logits = logits[:, -1, :]
             
