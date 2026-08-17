@@ -5,5 +5,5 @@ artifacts/
 *.safetensors
 *.pt
 *.bin
-tokenizer/
-dhruva-v1-assets/
+/tokenizer/
+/dhruva-v1-assets/

@@ -41,6 +41,19 @@ class BPETokenizer(TokenizerBase):
             ids = [self.bos_token_id] + ids + [self.eos_token_id]
         return ids
 
+    def encode_batch(self, texts: list[str], add_special_tokens: bool = False) -> list[list[int]]:
+        """Fast multi-threaded Rust batch encoding using HuggingFace Tokenizers."""
+        encodings = self._tokenizer.encode_batch(texts)
+        if add_special_tokens:
+            bos, eos = self.bos_token_id, self.eos_token_id
+            return [[bos] + enc.ids + [eos] for enc in encodings]
+        return [enc.ids for enc in encodings]
+
+    def count_tokens_batch(self, texts: list[str]) -> list[int]:
+        """Fast multi-threaded Rust batch token counting."""
+        encodings = self._tokenizer.encode_batch(texts)
+        return [len(enc.ids) for enc in encodings]
+
     def decode(self, ids: list[int], skip_special_tokens: bool = True) -> str:
         return self._tokenizer.decode(ids, skip_special_tokens=skip_special_tokens)
 

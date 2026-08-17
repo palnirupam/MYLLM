@@ -369,44 +369,32 @@ def build_kaggle_stage1a_assets(
     print(f"  -> Tokenizer SHA256     : {tok_sha256}")
 
     # ------------------------------------------------------------
-    # STEP 3: Measure Exact Token & Byte Counts
+    # STEP 3: Measure Exact Token & Byte Counts (Fast Batched Rust)
     # ------------------------------------------------------------
-    print(f"\n>>> [STEP 3/4] Measuring Exact Token & Byte Counts with Frozen 64K Tokenizer...")
+    print(f"\n>>> [STEP 3/4] Measuring Exact Token & Byte Counts with Frozen 64K Tokenizer (Fast Batched)...")
 
-    def measure_corpus_metrics(fpath: Path) -> Tuple[int, int, Dict[str, int], Dict[str, int], Dict[str, int]]:
-        tot_tokens = 0
-        tot_bytes = 0
-        by_lang = {}
-        by_dom = {}
-        by_src = {}
+    from myllm.training.data.fast_counter import measure_corpus_metrics_fast
 
-        with open(fpath, "r", encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                tot_bytes += len(line.encode("utf-8"))
-                item = json.loads(line)
-                toks = len(bpe_tokenizer.encode(item["text"], add_special_tokens=False))
-                tot_tokens += toks
-
-                l = item.get("language", "Unknown")
-                d = item.get("domain", "Unknown")
-                s = item.get("source", "Unknown")
-
-                by_lang[l] = by_lang.get(l, 0) + toks
-                by_dom[d] = by_dom.get(d, 0) + toks
-                by_src[s] = by_src.get(s, 0) + toks
-
-        return tot_tokens, tot_bytes, by_lang, by_dom, by_src
-
-    train_tokens, train_bytes, train_lang_toks, train_dom_toks, train_src_toks = measure_corpus_metrics(train_path)
-    val_tokens, val_bytes, val_lang_toks, val_dom_toks, val_src_toks = measure_corpus_metrics(val_path)
+    train_tokens, train_bytes, train_lang_toks, train_dom_toks, train_src_toks, total_train_docs = measure_corpus_metrics_fast(
+        train_path,
+        bpe_tokenizer,
+        batch_size=2000,
+        checkpoint_interval_docs=10000,
+        log_interval_sec=3.0,
+    )
+    val_tokens, val_bytes, val_lang_toks, val_dom_toks, val_src_toks, total_val_docs = measure_corpus_metrics_fast(
+        val_path,
+        bpe_tokenizer,
+        batch_size=2000,
+        checkpoint_interval_docs=5000,
+        log_interval_sec=3.0,
+    )
 
     train_sha256 = calculate_sha256(train_path)
     val_sha256 = calculate_sha256(val_path)
 
-    print(f"  -> TRAIN TOKENS : {train_tokens:,} tokens | {train_bytes:,} bytes | SHA256: {train_sha256[:16]}...")
-    print(f"  -> VAL TOKENS   : {val_tokens:,} tokens | {val_bytes:,} bytes | SHA256: {val_sha256[:16]}...")
+    print(f"  -> TRAIN TOKENS : {train_tokens:,} tokens | {train_bytes:,} bytes | Docs: {total_train_docs:,} | SHA256: {train_sha256[:16]}...")
+    print(f"  -> VAL TOKENS   : {val_tokens:,} tokens | {val_bytes:,} bytes | Docs: {total_val_docs:,} | SHA256: {val_sha256[:16]}...")
 
     # Strict token target enforcement:
     if train_tokens < int(0.95 * target_train_tokens):
