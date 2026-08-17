@@ -104,6 +104,37 @@ def load_and_tokenize_dataset(
     return TextDataset(all_ids, max_seq_len, tokenizer.eos_token_id)
 
 
+def load_persistent_jsonl_dataset(
+    jsonl_path: str,
+    tokenizer,
+    max_seq_len: int,
+) -> TextDataset:
+    """
+    Directly load, tokenize, and chunk a local JSONL corpus file without network or HuggingFace dependency.
+    """
+    import json
+    from pathlib import Path
+
+    p = Path(jsonl_path)
+    if not p.exists():
+        raise FileNotFoundError(f"Persistent corpus file not found: {jsonl_path}")
+
+    all_ids = []
+    with open(p, "r", encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            item = json.loads(line)
+            text = item.get("text", "")
+            if text.strip():
+                ids = tokenizer.encode(text, add_special_tokens=False)
+                if ids:
+                    all_ids.extend(ids)
+                    all_ids.append(tokenizer.eos_token_id)
+
+    return TextDataset(all_ids, max_seq_len, tokenizer.eos_token_id)
+
+
 def create_dataloader(
     dataset: TextDataset,
     batch_size: int,
