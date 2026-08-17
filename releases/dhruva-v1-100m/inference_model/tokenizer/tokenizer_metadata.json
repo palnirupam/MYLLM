@@ -1,0 +1,28 @@
+{
+  "tokenizer_name": "Dhruva-BPE-64K",
+  "vocab_size": 64000,
+  "special_tokens": [
+    "<pad>",
+    "<unk>",
+    "<bos>",
+    "<eos>",
+    "<tool_call>",
+    "<tool_result>",
+    "<scratchpad>",
+    "</scratchpad>",
+    "<evidence>",
+    "</evidence>"
+  ],
+  "languages": [
+    "English",
+    "Bengali",
+    "Hindi",
+    "Python/Math"
+  ],
+  "normalization": "NFC",
+  "encoding_format": "ByteLevel-BPE",
+  "sha256": "6f499dd90c9b21d82e53b25e954edb77137d5a9f538f746f554c33b22ae2dab7",
+  "trained_on": "stage1a_train.jsonl (TRAIN ONLY)",
+  "created_at": 1786970096.641454,
+  "architecture_compatibility": "Dhruva V1 (~100M Backbone, d_model=768, layers=8)"
+}
