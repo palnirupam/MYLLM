@@ -20,6 +20,8 @@ import hashlib
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Any
 
+from myllm.core.tokenizer.bpe import BPETokenizer
+
 
 DEFAULT_STAGE1A_RATIOS = {
     "Bengali": 0.15,      # 15M tokens (Indic priority)

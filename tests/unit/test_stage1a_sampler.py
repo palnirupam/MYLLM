@@ -138,7 +138,23 @@ def test_diversity_and_boundary_accounting():
         shutil.rmtree(temp_dir, ignore_errors=True)
 
 
+def test_sampler_module_tokenizer_import():
+    """Verify that sampler module exports and imports BPETokenizer without error."""
+    import myllm.training.data.sampler as sampler_mod
+    assert hasattr(sampler_mod, "BPETokenizer"), "BPETokenizer missing from sampler module scope!"
+    assert sampler_mod.BPETokenizer is BPETokenizer
+
+    # Verify tokenizer loading from directory
+    tok_dir = Path("dhruva-v1-assets/tokenizer")
+    if not (tok_dir / "tokenizer.json").exists():
+        tok_dir = Path("tokenizer")
+    tok = sampler_mod.BPETokenizer.load(str(tok_dir))
+    assert tok.vocab_size > 0, "Loaded tokenizer vocabulary must be positive!"
+    print(f"  [PASS] BPETokenizer import in sampler verified (Loaded vocab: {tok.vocab_size:,})")
+
+
 if __name__ == "__main__":
+    test_sampler_module_tokenizer_import()
     test_deterministic_sampler_reproducibility()
     test_diversity_and_boundary_accounting()
     print("\nALL STAGE 1A SAMPLER TESTS PASSED")
