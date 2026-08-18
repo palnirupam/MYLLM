@@ -10,9 +10,11 @@ class RMSNorm(nn.Module):
         self.weight = nn.Parameter(torch.ones(dim))
 
     def forward(self, x: Tensor) -> Tensor:
-        variance = x.pow(2).mean(-1, keepdim=True)
-        x = x * torch.rsqrt(variance + self.eps)
-        return self.weight * x
+        input_dtype = x.dtype
+        normalized = x.float()
+        variance = normalized.pow(2).mean(-1, keepdim=True)
+        normalized = normalized * torch.rsqrt(variance + self.eps)
+        return (self.weight.float() * normalized).to(input_dtype)
 
 class SwiGLUFFN(nn.Module):
     def __init__(self, d_model: int, intermediate_size: int):

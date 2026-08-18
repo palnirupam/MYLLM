@@ -10,6 +10,7 @@ from pathlib import Path
 import json
 import time
 import torch
+from myllm.utils.runtime_guard import assert_training_environment
 import torch.distributed as dist
 import torch.nn as nn
 from torch.optim import AdamW
@@ -21,6 +22,7 @@ from myllm.core.model.transformer import MyLLMModel
 
 
 def run_kaggle_ddp_preflight():
+    assert_training_environment()
     is_distributed = "WORLD_SIZE" in os.environ or "RANK" in os.environ
     if is_distributed:
         dist.init_process_group(backend="nccl" if torch.cuda.is_available() else "gloo")

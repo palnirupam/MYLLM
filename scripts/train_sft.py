@@ -6,6 +6,7 @@ import yaml
 import argparse
 import time
 import torch
+from myllm.utils.runtime_guard import assert_training_environment
 import torch.nn as nn
 from torch.optim import AdamW
 from pathlib import Path
@@ -50,6 +51,7 @@ def evaluate_validation(model, val_loader, device, vocab_size, max_batches=20):
     return total_loss / max(1, total_batches)
 
 def main():
+    assert_training_environment()
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, required=True, help="Path to YAML config")
     args = parser.parse_args()

@@ -6,6 +6,7 @@ from typing import Optional
 
 from .config import ModelConfig
 from .position import apply_rotary_emb
+from .layers import RMSNorm
 
 class Attention(nn.Module):
     def __init__(self, config: ModelConfig):
@@ -20,6 +21,8 @@ class Attention(nn.Module):
         self.k_proj = nn.Linear(config.d_model, self.n_kv_heads * self.head_dim, bias=False)
         self.v_proj = nn.Linear(config.d_model, self.n_kv_heads * self.head_dim, bias=False)
         self.o_proj = nn.Linear(self.n_heads * self.head_dim, config.d_model, bias=False)
+        self.q_norm = RMSNorm(self.head_dim, eps=config.norm_eps) if config.qk_norm else None
+        self.k_norm = RMSNorm(self.head_dim, eps=config.norm_eps) if config.qk_norm else None
 
     def forward(
         self,
@@ -33,6 +36,10 @@ class Attention(nn.Module):
         q = self.q_proj(x).view(bsz, seqlen, self.n_heads, self.head_dim)
         k = self.k_proj(x).view(bsz, seqlen, self.n_kv_heads, self.head_dim)
         v = self.v_proj(x).view(bsz, seqlen, self.n_kv_heads, self.head_dim)
+
+        if self.q_norm is not None:
+            q = self.q_norm(q)
+            k = self.k_norm(k)
 
         cos, sin = freqs
         
@@ -55,6 +62,12 @@ class Attention(nn.Module):
         q = q.transpose(1, 2)  # (bsz, n_heads, seqlen, head_dim)
         k = k.transpose(1, 2)  # (bsz, n_heads, seqlen_kv, head_dim)
         v = v.transpose(1, 2)  # (bsz, n_heads, seqlen_kv, head_dim)
+
+        # RMSNorm and RoPE use FP32 internally, then explicitly return to the
+        # projection dtype. SDPA must receive Q/K/V with one common dtype.
+        sdpa_dtype = v.dtype
+        q = q.to(sdpa_dtype)
+        k = k.to(sdpa_dtype)
 
         is_causal = mask is None and seqlen > 1
         

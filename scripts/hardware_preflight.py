@@ -9,6 +9,7 @@ from pathlib import Path
 import json
 import time
 import torch
+from myllm.utils.runtime_guard import assert_training_environment
 import torch.nn as nn
 from torch.optim import AdamW
 
@@ -19,6 +20,7 @@ from myllm.core.model.transformer import MyLLMModel
 
 
 def run_hardware_preflight(output_file: str = "artifacts/hardware_preflight.json") -> dict:
+    assert_training_environment()
     print(f"============================================================")
     print(f" DHRUVA HARDWARE PREFLIGHT & SYSTEM PROFILING")
     print(f"============================================================")

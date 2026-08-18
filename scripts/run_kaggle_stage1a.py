@@ -22,6 +22,7 @@ import yaml
 import time
 import math
 import torch
+from myllm.utils.runtime_guard import assert_training_environment
 import torch.distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler
 
@@ -38,6 +39,7 @@ from scripts.kaggle_ddp_preflight import run_kaggle_ddp_preflight
 
 
 def main():
+    assert_training_environment()
     parser = argparse.ArgumentParser()
     parser.add_argument("--assets-dir", type=str, default=None, help="Path to dhruva-v1-assets directory")
     parser.add_argument("--config", type=str, default="configs/dhruva_v1_production.yaml")

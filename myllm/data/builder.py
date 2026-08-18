@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Dict, Any, Iterator
+from typing import List, Dict, Any, Iterator, Optional
 from myllm.data.storage import StorageBackend, calculate_hash
 from myllm.data.provenance import ShardProvenance, ProvenanceTracker
 

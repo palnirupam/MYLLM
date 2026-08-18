@@ -1,5 +1,7 @@
 import os
 import sys
+import hashlib
+import json
 from pathlib import Path
 from typing import Iterable
 from tokenizers import Tokenizer
@@ -13,6 +15,7 @@ from .base import TokenizerBase
 class BPETokenizer(TokenizerBase):
     def __init__(self, tokenizer: Tokenizer):
         self._tokenizer = tokenizer
+        self.byte_fallback = bool(getattr(tokenizer.model, "byte_fallback", True))
         if self._tokenizer.decoder is None:
             self._tokenizer.decoder = ByteLevelDecoder()
         self._pad_token = "<pad>"
@@ -21,8 +24,8 @@ class BPETokenizer(TokenizerBase):
         self._eos_token = "<eos>"
 
     @classmethod
-    def train_from_texts(cls, texts: Iterable[str], vocab_size: int = 32000) -> 'BPETokenizer':
-        tokenizer = Tokenizer(BPE(unk_token="<unk>"))
+    def train_from_texts(cls, texts: Iterable[str], vocab_size: int = 32000, byte_fallback: bool = True) -> 'BPETokenizer':
+        tokenizer = Tokenizer(BPE(unk_token="<unk>", byte_fallback=byte_fallback))
         tokenizer.pre_tokenizer = ByteLevel()
         tokenizer.decoder = ByteLevelDecoder()
         
@@ -81,11 +84,45 @@ class BPETokenizer(TokenizerBase):
         path = Path(directory)
         path.mkdir(parents=True, exist_ok=True)
         self._tokenizer.save(str(path / "tokenizer.json"))
+        metadata = {
+            "schema_version": 1,
+            "tokenizer_sha256": hashlib.sha256((path / "tokenizer.json").read_bytes()).hexdigest(),
+            "vocab_size": self.vocab_size,
+            "special_tokens": {
+                "pad": self.pad_token_id,
+                "unk": self.unk_token_id,
+                "bos": self.bos_token_id,
+                "eos": self.eos_token_id,
+            },
+            "normalization": "tokenizers-default",
+            "byte_fallback": self.byte_fallback,
+        }
+        (path / "tokenizer_metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
 
     @classmethod
     def load(cls, directory: str) -> 'BPETokenizer':
         path = Path(directory) / "tokenizer.json"
+        if not path.is_file():
+            raise FileNotFoundError(path)
         tokenizer = Tokenizer.from_file(str(path))
         if tokenizer.decoder is None:
             tokenizer.decoder = ByteLevelDecoder()
-        return cls(tokenizer)
+        instance = cls(tokenizer)
+        metadata_path = path.parent / "tokenizer_metadata.json"
+        if metadata_path.is_file():
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if metadata.get("tokenizer_sha256") != actual:
+                raise ValueError("tokenizer metadata hash does not match tokenizer.json")
+            if int(metadata.get("vocab_size", -1)) != instance.vocab_size:
+                raise ValueError("tokenizer metadata vocab size mismatch")
+            expected_special = metadata.get("special_tokens", {})
+            actual_special = {
+                "pad": instance.pad_token_id,
+                "unk": instance.unk_token_id,
+                "bos": instance.bos_token_id,
+                "eos": instance.eos_token_id,
+            }
+            if expected_special != actual_special:
+                raise ValueError("tokenizer special-token IDs do not match metadata")
+        return instance

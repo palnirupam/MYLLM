@@ -10,10 +10,9 @@ from myllm.intelligence.schemas import VerificationStatus
 from myllm.intelligence.tools.sandbox import ProcessSandbox, SandboxConfig
 
 
-class CodeExecutionVerifier(BaseVerifier):
+class CodeSyntaxVerifier(BaseVerifier):
     """
-    Verifies that Python code snippets generated in responses have valid syntax
-    and run cleanly without unhandled syntax or runtime exceptions.
+    Verifies Python syntax only; it never claims execution correctness.
     """
 
     CODE_BLOCK_REGEX = re.compile(r"```(?:python)?\s*\n(.*?)```", re.DOTALL | re.IGNORECASE)
@@ -33,7 +32,7 @@ class CodeExecutionVerifier(BaseVerifier):
             return VerificationResult(
                 status=VerificationStatus.UNVERIFIED,
                 score=0.5,
-                verifier_name="CodeExecutionVerifier",
+                verifier_name="CodeSyntaxVerifier",
                 critique="No code blocks found in response.",
             )
 
@@ -48,14 +47,17 @@ class CodeExecutionVerifier(BaseVerifier):
             return VerificationResult(
                 status=VerificationStatus.REVISE,
                 score=0.0,
-                verifier_name="CodeExecutionVerifier",
+                verifier_name="CodeSyntaxVerifier",
                 critique=f"Python syntax error in response: {'; '.join(syntax_errors)}",
                 details={"syntax_errors": syntax_errors},
             )
 
         return VerificationResult(
             status=VerificationStatus.PASS,
-            score=0.95,
-            verifier_name="CodeExecutionVerifier",
-            details={"valid_code_blocks": len(code_blocks)},
+                score=1.0,
+                verifier_name="CodeSyntaxVerifier",
+                details={"valid_code_blocks": len(code_blocks), "syntax_only": True},
         )
+
+
+CodeExecutionVerifier = CodeSyntaxVerifier

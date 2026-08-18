@@ -4,6 +4,7 @@
 import argparse
 import yaml
 import torch
+from myllm.utils.runtime_guard import assert_training_environment
 import random
 import numpy as np
 from pathlib import Path
@@ -24,6 +25,7 @@ def set_seed(seed: int):
         torch.cuda.manual_seed_all(seed)
 
 def main():
+    assert_training_environment()
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default="configs/v0_100m.yaml")
     args = parser.parse_args()

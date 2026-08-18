@@ -15,10 +15,41 @@ class ModelConfig:
     norm_eps: float = 1e-5
     rope_theta: float = 10000.0
     tie_word_embeddings: bool = True
+    # Disabled by default so existing V1 checkpoints keep the same state dict.
+    qk_norm: bool = False
+
+    def __post_init__(self) -> None:
+        if self.vocab_size <= 0 or self.d_model <= 0 or self.n_layers <= 0:
+            raise ValueError("vocab_size, d_model, and n_layers must be positive")
+        if self.n_heads <= 0 or self.n_kv_heads <= 0:
+            raise ValueError("attention head counts must be positive")
+        if self.d_model % self.n_heads != 0:
+            raise ValueError("d_model must be divisible by n_heads")
+        if self.n_heads % self.n_kv_heads != 0:
+            raise ValueError("n_heads must be divisible by n_kv_heads for GQA")
+        if self.head_dim % 2 != 0:
+            raise ValueError("head_dim must be even for RoPE")
+        if self.intermediate_size <= 0 or self.max_seq_len <= 0:
+            raise ValueError("intermediate_size and max_seq_len must be positive")
 
     @property
     def head_dim(self) -> int:
         return self.d_model // self.n_heads
+
+    def expected_parameter_count(self) -> int:
+        """Exact unique trainable parameter count for this bias-free architecture."""
+        embedding = self.vocab_size * self.d_model
+        attention = (
+            self.d_model * (self.n_heads * self.head_dim)
+            + 2 * self.d_model * (self.n_kv_heads * self.head_dim)
+            + (self.n_heads * self.head_dim) * self.d_model
+        )
+        swiglu = 3 * self.d_model * self.intermediate_size
+        block_norms = 2 * self.d_model
+        qk_norms = 2 * self.head_dim if self.qk_norm else 0
+        final_norm = self.d_model
+        output = 0 if self.tie_word_embeddings else self.vocab_size * self.d_model
+        return embedding + self.n_layers * (attention + swiglu + block_norms + qk_norms) + final_norm + output
 
     def save(self, path: str) -> None:
         Path(path).write_text(json.dumps(asdict(self), indent=2))

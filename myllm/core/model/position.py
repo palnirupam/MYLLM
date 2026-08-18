@@ -19,6 +19,8 @@ def rotate_half(x: Tensor) -> Tensor:
 
 def apply_rotary_emb(q: Tensor, k: Tensor, cos: Tensor, sin: Tensor) -> tuple[Tensor, Tensor]:
     """Applies Rotary Position Embedding to Query and Key tensors."""
+    cos = cos.to(device=q.device, dtype=q.dtype)
+    sin = sin.to(device=q.device, dtype=q.dtype)
     q_embed = (q * cos) + (rotate_half(q) * sin)
     k_embed = (k * cos) + (rotate_half(k) * sin)
     return q_embed, k_embed

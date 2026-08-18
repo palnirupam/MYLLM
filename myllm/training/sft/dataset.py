@@ -28,38 +28,24 @@ class SFTDataset(Dataset):
         else:
             prompt_text = self.instruction_prefix + f"{instruction}" + self.response_prefix
             
-        # We need to tokenize prompt and response separately to know the exact split point
-        # But wait, BPE tokenizers might merge tokens across boundaries. 
-        # A safer way: tokenize prompt_text, and then tokenize full_text, 
-        # then set the labels for the prompt length to -100.
-        
-        full_text = prompt_text + response
-        
-        # Tokenize (add_special_tokens=False because we handle BOS/EOS manually)
+        if not response.strip():
+            raise ValueError(f"SFT example {idx} has an empty assistant response")
+
+        # Encode the two regions independently so the supervised boundary cannot
+        # shift because of a BPE merge spanning prompt and assistant text.
         prompt_ids = self.tokenizer.encode(prompt_text, add_special_tokens=False)
-        if self.tokenizer.bos_token_id is not None:
-            prompt_ids = [self.tokenizer.bos_token_id] + prompt_ids
-            
-        full_ids = self.tokenizer.encode(full_text, add_special_tokens=False)
-        if self.tokenizer.bos_token_id is not None:
-            full_ids = [self.tokenizer.bos_token_id] + full_ids
-            
-        # Add EOS to the full sequence
-        if self.tokenizer.eos_token_id is not None:
-            full_ids.append(self.tokenizer.eos_token_id)
-            
-        # Truncate if necessary
-        if len(full_ids) > self.max_seq_len:
-            full_ids = full_ids[:self.max_seq_len]
-            # Ensure last token is eos if truncated? In SFT it's better to truncate carefully or just let it be truncated.
-            
-        # Create labels: -100 for prompt, target id for response
-        labels = list(full_ids)
-        prompt_len = len(prompt_ids)
-        
-        # Mask prompt tokens
-        for i in range(min(prompt_len, len(labels))):
-            labels[i] = -100
+        response_ids = self.tokenizer.encode(response, add_special_tokens=False)
+        bos_ids = [self.tokenizer.bos_token_id] if self.tokenizer.bos_token_id is not None else []
+        eos_ids = [self.tokenizer.eos_token_id] if self.tokenizer.eos_token_id is not None else []
+
+        response_budget = self.max_seq_len - len(bos_ids) - len(eos_ids)
+        response_ids = response_ids[:response_budget]
+        prompt_budget = self.max_seq_len - len(bos_ids) - len(response_ids) - len(eos_ids)
+        if prompt_budget < len(prompt_ids):
+            prompt_ids = prompt_ids[-prompt_budget:] if prompt_budget > 0 else []
+
+        full_ids = bos_ids + prompt_ids + response_ids + eos_ids
+        labels = [-100] * (len(bos_ids) + len(prompt_ids)) + response_ids + eos_ids
             
         # Padding
         pad_id = self.tokenizer.pad_token_id if self.tokenizer.pad_token_id is not None else 0

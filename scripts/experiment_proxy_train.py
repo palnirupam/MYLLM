@@ -38,6 +38,7 @@ import hashlib
 import random
 import argparse
 import torch
+from myllm.utils.runtime_guard import assert_training_environment
 import torch.nn as nn
 import torch.nn.functional as F
 from pathlib import Path
@@ -779,6 +780,7 @@ def load_corpus(proxy_bytes: int = 10_000_000,
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
+    assert_training_environment()
     parser = argparse.ArgumentParser(description="Dhruva V0 Tokenizer Experiment")
     parser.add_argument("--smoke-test", action="store_true",
                         help="Run a minimal 1-candidate, 1-view, 50-step smoke test "

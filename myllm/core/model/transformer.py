@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.utils.checkpoint as checkpoint
 from torch import Tensor
 from typing import Optional
 
@@ -33,6 +34,7 @@ class MyLLMModel(nn.Module):
     def __init__(self, config: ModelConfig):
         super().__init__()
         self.config = config
+        self.gradient_checkpointing = False
         
         self.token_embedding = nn.Embedding(config.vocab_size, config.d_model)
         self.layers = nn.ModuleList([TransformerBlock(config) for _ in range(config.n_layers)])
@@ -105,7 +107,14 @@ class MyLLMModel(nn.Module):
         
         for i, layer in enumerate(self.layers):
             layer_kv_cache = kv_cache[i] if kv_cache is not None else None
-            h, layer_new_kv_cache = layer(h, freqs, attention_mask, layer_kv_cache)
+            if self.training and self.gradient_checkpointing and not use_cache and layer_kv_cache is None:
+                def layer_forward(hidden, block=layer):
+                    return block(hidden, freqs, attention_mask, None)[0]
+
+                h = checkpoint.checkpoint(layer_forward, h, use_reentrant=False)
+                layer_new_kv_cache = None
+            else:
+                h, layer_new_kv_cache = layer(h, freqs, attention_mask, layer_kv_cache)
             if use_cache:
                 new_kv_cache.append(layer_new_kv_cache)
                 

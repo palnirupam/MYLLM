@@ -11,6 +11,7 @@ from pathlib import Path
 import json
 import time
 import torch
+from myllm.utils.runtime_guard import assert_training_environment
 import torch.nn as nn
 from torch.optim import AdamW
 
@@ -27,6 +28,7 @@ def run_vram_gate(
     num_measure_steps: int = 5,
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
 ) -> dict:
+    assert_training_environment()
     print(f"============================================================")
     print(f" DHRUVA VRAM GATE: Target seq_len={seq_len}, micro_batch={micro_batch_size}, FP16")
     print(f" Device: {device} ({torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'})")
