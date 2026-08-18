@@ -95,6 +95,16 @@ held-out benchmark fragments are rejected from the training corpus. The
 quality gate fails closed when rejection, duplicate, script-mismatch, or
 contamination thresholds are exceeded.
 
+The pinned Hugging Face source catalog is
+`configs/dhruva_v2_data_sources.yaml`. It is a source contract, not a license
+waiver: every source revision, config, split, license, and target token share
+must be recorded before streaming. The catalog currently blocks the
+`python-edu` slice because its upstream Stack v2 data has document-level
+licenses; it cannot be flattened into a single corpus license. A long run is
+not permitted while a planned token share remains blocked. Final token shares
+must be recomputed with the frozen V2 tokenizer after filtering, and the
+catalog shares are only initial targets.
+
 ## T4 Constraints
 
 V2 training scripts are Kaggle-only and must use one DDP process per T4 GPU.
